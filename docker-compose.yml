@@ -18,5 +18,17 @@ services:
       timeout: 5s
       retries: 10
 
+  app:
+    build: .
+    container_name: business-card-app
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://business_card:business_card_dev@postgres:5432/business_card?schema=public
+    ports:
+      - "3005:3005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   business_card_data:
