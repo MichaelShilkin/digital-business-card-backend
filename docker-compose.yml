@@ -1,4 +1,3 @@
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -6,10 +5,12 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: business_card
-      POSTGRES_PASSWORD: business_card_dev
+      # The default is for local development only. Set POSTGRES_PASSWORD on any shared server.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-business_card_dev}
       POSTGRES_DB: business_card
     ports:
-      - "5434:5432"
+      # Published on localhost only, so the database is not reachable from the network.
+      - "127.0.0.1:5434:5432"
     volumes:
       - business_card_data:/var/lib/postgresql/data
     healthcheck:
@@ -23,7 +24,7 @@ services:
     container_name: business-card-app
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://business_card:business_card_dev@postgres:5432/business_card?schema=public
+      DATABASE_URL: postgresql://business_card:${POSTGRES_PASSWORD:-business_card_dev}@postgres:5432/business_card?schema=public
     ports:
       - "3005:3005"
     depends_on:

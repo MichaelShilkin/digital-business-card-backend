@@ -94,6 +94,13 @@ describe('Profile GraphQL (e2e)', () => {
     expect(response.body.data.profile).toBeNull();
   });
 
+  it('redirects the root address to Apollo Sandbox', async () => {
+    await request(app.getHttpServer())
+      .get('/')
+      .expect(302)
+      .expect('Location', '/graphql');
+  });
+
   it('exposes the schema for Apollo Sandbox', async () => {
     const response = await request(app.getHttpServer())
       .post('/graphql')
